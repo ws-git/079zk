@@ -1,0 +1,1 @@
+var Handlebars={compile:function(n){console.log(n);var o=n.replace(/[\n\r]/g,"");return console.log(o),function(e){console.log(e);var r="",n=new RegExp("{{#each\\s+this}}(.+){{/each}}","g");return o.replace(n,function(n,c){e.forEach(function(o,n){var e=c.replace(/\{\{(\w+)\}\}/g,function(n,e){return o[e]});r+=e}),console.log(r)}),r}}};

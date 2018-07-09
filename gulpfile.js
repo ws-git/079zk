@@ -7,6 +7,8 @@ var uglify = require('gulp-uglify');
 var autoprefixer = require('gulp-autoprefixer');
 var htmlmin = require('gulp-htmlmin');
 var sequence = require('gulp-sequence');
+var datajson = require('./data/data.json');
+
 var fs = require('fs');
 var path = require('path');
 var url = require('url');
@@ -21,8 +23,12 @@ gulp.task('server', function() {
                 if (pathname === './favicon.ico') {
                     return false;
                 }
-                pathname = pathname === '/' ? './index.html' : pathname;
-                res.end(fs.readFileSync(path.join(__dirname, 'src', pathname)));
+                if (pathname === '/api/index') {
+                    res.end(JSON.stringify(datajson))
+                } else {
+                    pathname = pathname === '/' ? './index.html' : pathname;
+                    res.end(fs.readFileSync(path.join(__dirname, 'src', pathname)));
+                }
             }
         }))
 })
@@ -38,11 +44,23 @@ gulp.task('devscss', function() {
         .pipe(gulp.dest('./src/css'));
 });
 
+//压缩js
+gulp.task('uglify', function() {
+    gulp.src('./src/**/*.js')
+        .pipe(uglify())
+        .pipe(gulp.dest('./src/newjs'))
+});
+//压缩html
+gulp.task('htmlmin', function() {
+    gulp.src('./src/*html')
+        .pipe(htmlmin())
+        .pipe(gulp.dest('./src/html'))
+});
 //监听css
 gulp.task('watch', function() {
     return gulp.watch('./src/scss/*scss', ['devscss']);
 });
 
 gulp.task('default', function(cd) {
-    sequence('devscss', 'watch', 'server', cd);
+    sequence('devscss', 'uglify', 'htmlmin', 'watch', 'server', cd);
 })

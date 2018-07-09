@@ -1,0 +1,1 @@
+$(function(){$.ajax({url:"/api/index",success:function(a){var t=$("#tpl").html(),l=handlebars.template(t)(a.list);$(".nav").html(l)}})});
